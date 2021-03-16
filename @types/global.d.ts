@@ -7,10 +7,18 @@ declare module 'little-state-machine' {
     [x: string]: any;
   }
 
+  // interface SubmitSteps {
+  //   recordYourCough?: {
+  //     recordingFile?: File;
+  //     uploadedFile?: File;
+  //   }
+  // }
   interface SubmitSteps {
     recordYourCough?: {
-      recordingFile?: File;
-      uploadedFile?: File;
+      predictionResult: {
+        score: number,
+        word: string,
+      }[];
     }
   }
 }

@@ -28,19 +28,20 @@ import {
 } from './style';
 
 function getDefaultValue(state?: SubmitSteps, currentLogic?: 'recordYourCough'): RecordType {
-  if (state && currentLogic && state[currentLogic]?.recordingFile?.size !== undefined) {
-    return state[currentLogic] as RecordType;
-  }
+  // if (state && currentLogic && state[currentLogic]?.recordingFile?.size !== undefined) {
+  //   return state[currentLogic] as RecordType;
+  // }
 
-  return {
-    recordingFile: null,
-  };
+  // return {
+  //   recordingFile: null,
+  // };
+  return state?.[currentLogic || 'recordYourCough'] as RecordType;
 }
 
 const Introduction = ({
   previousStep,
   nextStep,
-  otherSteps,
+  // otherSteps,
   metadata,
   storeKey,
 }: Wizard.StepProps) => {
@@ -60,20 +61,23 @@ const Introduction = ({
     }
   }, [history, previousStep]);
 
-  const handleManualUpload = React.useCallback(() => {
-    if (otherSteps && otherSteps.manualUploadStep) {
-      history.push(otherSteps.manualUploadStep);
-    }
-  }, [otherSteps, history]);
+  // const handleManualUpload = React.useCallback(() => {
+  //   if (otherSteps && otherSteps.manualUploadStep) {
+  //     history.push(otherSteps.manualUploadStep);
+  //   }
+  // }, [otherSteps, history]);
 
   const handleNext = React.useCallback(
     values => {
       if (nextStep) {
+        // actions.updateAction({
+        //   [metadata?.currentLogic]: {
+        //     recordingFile: values.recordingFile,
+        //     uploadedFile: null,
+        //   },
+        // });
         actions.updateAction({
-          [metadata?.currentLogic]: {
-            recordingFile: values.recordingFile,
-            uploadedFile: null,
-          },
+          [metadata?.currentLogic]: values,
         });
         history.push(nextStep, { from: 'step-record' });
       }
@@ -109,10 +113,10 @@ const Introduction = ({
 
       <Record
         defaultValues={getDefaultValue(state?.[storeKey], metadata?.currentLogic)}
-        onManualUpload={handleManualUpload}
+        // onManualUpload={handleManualUpload}
         onNext={handleNext}
-        currentLogic={metadata?.currentLogic || ''}
-        action={actions.updateAction}
+        // currentLogic={metadata?.currentLogic || ''}
+        // action={actions.updateAction}
       />
     </>
   );

@@ -2,7 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import usePortal from 'react-useportal';
 import { useTranslation, Trans } from 'react-i18next';
-import axios from 'axios';
+// import axios from 'axios';
 
 // Form
 import { useStateMachine } from 'little-state-machine';
@@ -34,7 +34,7 @@ import {
   IntroText,
 } from './style';
 
-const predictionEndpointUrl = process.env.REACT_APP_PREDICTION_ENDPOINT || '';
+// const predictionEndpointUrl = process.env.REACT_APP_PREDICTION_ENDPOINT || '';
 
 const PredictionResult = () => {
   // Hooks
@@ -76,32 +76,34 @@ const PredictionResult = () => {
           recordYourCough,
         } = state['submit-steps'];
 
-        const body = new FormData();
+        // const body = new FormData();
 
-        // Records
-        if (recordYourCough?.recordingFile || recordYourCough?.uploadedFile) {
-          body.append('cough', recordYourCough.recordingFile! || recordYourCough.uploadedFile!);
-        }
+        // // Records
+        // if (recordYourCough?.recordingFile || recordYourCough?.uploadedFile) {
+        //   body.append('cough', recordYourCough.recordingFile! || recordYourCough.uploadedFile!);
+        // }
 
         // Restart
         actions.resetStore({});
 
-        const predictionResult = await axios.post(predictionEndpointUrl, body, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        if (predictionResult.data && ('prediction' in predictionResult.data)) {
-          setProcessing(false);
-          const result = predictionResult.data.prediction;
-          console.log('Prediction: ', predictionResult.data.prediction, ' - ', typeof predictionResult.data.prediction);
-          console.log('Result: ', result);
-          setLikelihood(`${result}`);
-          // setLikelihood(t('predictionResult:result', { context: result, defaultValue: result }));
-        } else {
-          setProcessing(false);
-          setLikelihood('-');
-        }
+        // const predictionResult = await axios.post(predictionEndpointUrl, body, {
+        //   headers: {
+        //     'Content-Type': 'multipart/form-data',
+        //   },
+        // });
+        setProcessing(false);
+        setLikelihood(recordYourCough?.predictionResult?.[0]?.word ?? '-');
+        console.log(recordYourCough);
+        // if (predictionResult.data && ('prediction' in predictionResult.data)) {
+        //   setProcessing(false);
+        //   const result = predictionResult.data.prediction;
+        //   console.log('Result: ', result);
+        //   setLikelihood(`${result}`);
+        //   // setLikelihood(t('predictionResult:result', { context: result, defaultValue: result }));
+        // } else {
+        //   setProcessing(false);
+        //   setLikelihood('-');
+        // }
       } else {
         handleStartAgain();
       }

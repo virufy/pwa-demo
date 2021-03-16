@@ -28,6 +28,7 @@
     },
     "next": "Siguiente",
     "releaseButtonStart": "Suelte para empezar a grabar",
+    "loadingModel": "Cargando modelo...",
     "releaseButtonStop": "Suelte para detener la grabación",
     "shortRecording": "Por favor, haga una grabación de al menos 3 segundos"
   },
@@ -37,7 +38,7 @@
     },
     "next": "Continuar",
     "delete": "Borrar",
-    "text": "Pulse el botón de grabación y tosa intencionadamente de 3 a 5 veces <strong>durante 3 segundos como minimo.</strong>. Cuando haya terminado, haga clic en Continuar.",
+    "text": "Pulsa el botón de grabación y tose intencionadamente de 3 a 5 veces hasta que aparezca el resultado.",
     "textCount": "Haga clic en el botón de grabar y cuente claramente del uno al diez. Cuando haya terminado, haga clic en continuar.",
     "upload": "Sube tu propio audio"
   },

@@ -1,6 +1,6 @@
 import React from 'react';
-import usePortal from 'react-useportal';
-import { useTranslation, Trans } from 'react-i18next';
+// import usePortal from 'react-useportal';
+import { Trans } from 'react-i18next';
 
 // Form
 import { Controller, useForm } from 'react-hook-form';
@@ -9,129 +9,143 @@ import * as Yup from 'yup';
 
 // Components
 import MicRecorder from 'components/MicRecorder';
-import WizardButtons from 'components/WizardButtons';
+// import WizardButtons from 'components/WizardButtons';
 
 // Images
-import UploadSVG from 'assets/icons/upload.svg';
+// import UploadSVG from 'assets/icons/upload.svg';
 
 // Styles
 import {
   MainContainer,
-  UploadContainer,
-  UploadImage,
-  UploadText,
+  // UploadContainer,
+  // UploadImage,
+  // UploadText,
   Text,
   MicContainer,
 } from './style';
 
-const audioMaxSizeInMb = 5;
+// const audioMaxSizeInMb = 5;
 
 const schema = Yup.object({
-  recordingFile: Yup.mixed()
-    .required('ERROR.FILE_REQUIRED')
-    .test('fileSize', 'ERROR.FILE_SIZE', (value?: any) => {
-      if (value) {
-        const file = value as File;
-        const { size } = file;
-        return (size <= 1024 ** 3 * audioMaxSizeInMb);
-      }
-      return !!value;
-    })
-    .test('fileDuration', 'ERROR.FILE_DURATION', async (value?: any) => {
-      if (value) {
-        const file = value as File;
-        const audio = new Audio(URL.createObjectURL(file));
+  // recordingFile: Yup.mixed()
+  //   .required('ERROR.FILE_REQUIRED')
+  //   .test('fileSize', 'ERROR.FILE_SIZE', (value?: any) => {
+  //     if (value) {
+  //       const file = value as File;
+  //       const { size } = file;
+  //       return (size <= 1024 ** 3 * audioMaxSizeInMb);
+  //     }
+  //     return !!value;
+  //   })
+  //   .test('fileDuration', 'ERROR.FILE_DURATION', async (value?: any) => {
+  //     if (value) {
+  //       const file = value as File;
+  //       const audio = new Audio(URL.createObjectURL(file));
 
-        audio.load();
-        await new Promise(resolver => audio.addEventListener('loadedmetadata', resolver));
-        return (audio.duration >= 3);
-      }
-      return !!value;
-    }),
+  //       audio.load();
+  //       await new Promise(resolver => audio.addEventListener('loadedmetadata', resolver));
+  //       return (audio.duration >= 3);
+  //     }
+  //     return !!value;
+  //   }),
+  predictionResult: Yup.array().of(Yup.object({
+    score: Yup.number(),
+    word: Yup.string(),
+  })).required('ERROR.PREDICTION_REQUIRED'),
 }).defined();
 
 export type RecordType = Yup.InferType<typeof schema>;
 
 interface RecordProps {
   onNext: (values: RecordType) => void,
-  onManualUpload: () => void,
+  // onManualUpload: () => void,
   defaultValues: RecordType,
-  currentLogic: string,
-  action:any,
+  // currentLogic: string,
+  // action:any,
 }
 
 const Record = ({
   onNext,
-  onManualUpload,
+  // onManualUpload,
   defaultValues,
-  currentLogic,
-  action,
+  // currentLogic,
+  // action,
 }: RecordProps) => {
   // Hooks
-  const { Portal } = usePortal({
-    bindTo:
-      document && (document.getElementById('wizard-buttons') as HTMLDivElement),
-  });
+  // const { Portal } = usePortal({
+  //   bindTo:
+  //     document && (document.getElementById('wizard-buttons') as HTMLDivElement),
+  // });
   const {
-    handleSubmit, control, getValues, formState,
+    handleSubmit, control, watch,
   } = useForm({
     mode: 'onChange',
     defaultValues,
     resolver: yupResolver(schema),
   });
-  const { t } = useTranslation();
-
-  const { isValid } = formState;
 
   // Refs
   const micKey = React.useRef<number>(1);
+  const submitCalled = React.useRef(false);
 
-  const onManualUploadWithFile = () => {
-    action({
-      [currentLogic]: {
-        recordingFile: getValues('recordingFile') || null,
-        uploadedFile: null,
-      },
-    });
-    onManualUpload?.();
-  };
+  const predictionResult = watch('predictionResult');
+
+  const onSubmit = React.useMemo(() => handleSubmit(onNext), [handleSubmit, onNext]);
+
+  React.useEffect(() => {
+    if (predictionResult && predictionResult.length > 0 && !submitCalled.current) {
+      submitCalled.current = true;
+      onSubmit();
+    }
+  }, [predictionResult, onSubmit]);
+
+  React.useEffect(() => {
+    submitCalled.current = false;
+  }, []);
+
+  // const onManualUploadWithFile = () => {
+  //   action({
+  //     [currentLogic]: {
+  //       recordingFile: getValues('recordingFile') || null,
+  //       uploadedFile: null,
+  //     },
+  //   });
+  //   onManualUpload?.();
+  // };
 
   return (
     <>
       <MainContainer>
         <Text>
           <Trans i18nKey="recordingsRecord:text">
-            Click the record button and cough intentionally 3 to 5 times <strong>during 3 seconds minimum</strong>.
-            When you are done, click Continue
+            Click the record button and cough intentionally 3 to 5 times until your result is displayed.
           </Trans>
         </Text>
         <MicContainer>
           <Controller
             control={control}
-            name="recordingFile"
+            name="predictionResult"
             render={({ onChange }) => (
               <MicRecorder
                 key={micKey.current} // On delete, easy re-mount a new mic recorder
-                onNewRecord={onChange}
-                recordingFile={defaultValues?.recordingFile}
+                onPredictionResult={onChange}
               />
             )}
           />
         </MicContainer>
 
-        <Portal>
+        {/* <Portal>
           <WizardButtons
             invert
             leftLabel={t('recordingsRecord:next')}
             leftDisabled={!isValid}
             leftHandler={handleSubmit(onNext)}
           />
-          {/* Upload Container */}
           <UploadContainer onClick={onManualUploadWithFile}>
             <UploadImage src={UploadSVG} />
             <UploadText>{t('recordingsRecord:upload')}</UploadText>
           </UploadContainer>
-        </Portal>
+        </Portal> */}
       </MainContainer>
     </>
   );

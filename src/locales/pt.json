@@ -28,6 +28,7 @@
     },
     "next": "Próximo",
     "releaseButtonStart": "Lançamento para iniciar a gravação",
+    "loadingModel": "Cargando modelo...",
     "releaseButtonStop": "Liberação para parar a gravação",
     "shortRecording": "Por favor, faça uma gravação de pelo menos 3 segundos"
   },
@@ -37,7 +38,7 @@
     },
     "next": "Continuar",
     "delete": "Deletar",
-    "text": "Clique no botão gravar e tussa intencionalmente de 3 a 5 vezes <strong>durante 3 segundos no mínimo</strong>. Quando tiver terminado, clique em Continuar.",
+    "text": "Clique no botão gravar e tussa intencionalmente de 3 a 5 vezes até que seu resultado seja exibido.",
     "textCount": "Clique no botão gravar e conte claramente de um até dez. Quando acabar, clique em continuar.",
     "upload": "Carregue seu próprio arquivo"
   },
